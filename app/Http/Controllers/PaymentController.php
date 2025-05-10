@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Payment;
+use App\Models\Enrollment;
 
 class PaymentController extends Controller
 {
@@ -21,8 +22,8 @@ class PaymentController extends Controller
      */
     public function create()
     {
-        $payments = Payment::pluck('enroll_no','id');
-        return view('payments.create', compact('payments'));
+        $enrollments = Enrollment::pluck('enroll_no','id');
+        return view('payments.create', compact('enrollments'));
     }
 
     /**
@@ -40,8 +41,8 @@ class PaymentController extends Controller
      */
     public function show(string $id)
     {
-        $payment = Payment::find($id);
-        return view('payments.show')->with('payments', $payment);
+        $item = Payment::with('enrollment')->findOrFail($id);
+        return view('payments.show', compact('item'));
     }
 
     /**
@@ -49,8 +50,10 @@ class PaymentController extends Controller
      */
     public function edit(string $id)
     {
-        $payment = Payment::find($id);
-        return view('payments.edit')->with('payments', $payment);
+        $payments = Payment::find($id);        
+        $enrollments = Enrollment::pluck('enroll_no','id');
+        return view('payments.edit', compact('payments','enrollments'));
+
     }
 
     /**
